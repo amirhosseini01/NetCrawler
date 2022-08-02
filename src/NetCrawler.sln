@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30114.105
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{EA052157-5DF3-48E9-AEF3-7EC06561157F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GatheredData", "GatheredData", "{BF05A7B0-28A2-4FA3-BAE7-1A9DFDA9C64B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GatheredData.Api", "Services\GatheredData\GatheredData.Api\GatheredData.Api.csproj", "{D4C1952E-650A-4CAB-BF70-078A68A70DB8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GatheredData.Test", "Services\GatheredData\GatheredData.Test\GatheredData.Test.csproj", "{4AD79965-2039-441B-876E-AF8C5E882501}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D4C1952E-650A-4CAB-BF70-078A68A70DB8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D4C1952E-650A-4CAB-BF70-078A68A70DB8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D4C1952E-650A-4CAB-BF70-078A68A70DB8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D4C1952E-650A-4CAB-BF70-078A68A70DB8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4AD79965-2039-441B-876E-AF8C5E882501}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4AD79965-2039-441B-876E-AF8C5E882501}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4AD79965-2039-441B-876E-AF8C5E882501}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4AD79965-2039-441B-876E-AF8C5E882501}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{BF05A7B0-28A2-4FA3-BAE7-1A9DFDA9C64B} = {EA052157-5DF3-48E9-AEF3-7EC06561157F}
+		{D4C1952E-650A-4CAB-BF70-078A68A70DB8} = {BF05A7B0-28A2-4FA3-BAE7-1A9DFDA9C64B}
+		{4AD79965-2039-441B-876E-AF8C5E882501} = {BF05A7B0-28A2-4FA3-BAE7-1A9DFDA9C64B}
+	EndGlobalSection
+EndGlobal
