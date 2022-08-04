@@ -1,0 +1,9 @@
+version: "3.3"
+services:
+  gatheredgataapi:    
+    container_name: gatheredgataapi
+    build:      
+      context: .
+      dockerfile: Services/GatheredData/GatheredData.Api/Dockerfile
+    ports:
+      - "8080:80"
