@@ -1,21 +1,29 @@
 version: "3.3"
 services:
+  
   #Gathered Data Service Configs
+  #api
   gathereddataapi:    
     container_name: gathereddataapi
     build:      
       context: .
       dockerfile: Services/GatheredData/GatheredData.Api/Dockerfile
+    depends_on:
+      - gathereddataapidb
     ports:
       - "8080:80"
+    links:
+      - gathereddataapidb
+  
+  #db
   gathereddataapidb:
     image: mongo
     container_name: gathereddataapidb
     restart: always
+    volumes:
+      - gathereddataapidbmongo:/data/db
     ports:
       - "27017:27017"
-    volumes:
-      - mongo_data:/data/db
 
 volumes:
-  mongo_data:
+  gathereddataapidbmongo:
