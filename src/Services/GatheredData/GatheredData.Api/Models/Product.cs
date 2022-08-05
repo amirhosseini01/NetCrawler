@@ -8,6 +8,7 @@ public class Product
     [BsonRepresentation(BsonType.ObjectId)]
     public string? Id { get; set; }
 
-    [BsonElement("Name")]
+
+    [BsonElement("ProductName")]
     public string ProductName { get; set; } = null!;
 }

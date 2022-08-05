@@ -1,0 +1,8 @@
+# switch to mongo command in docker cli
+mongosh
+
+# open or create db
+use <your db name>
+
+# create collection
+db.createCollection('your collection name')

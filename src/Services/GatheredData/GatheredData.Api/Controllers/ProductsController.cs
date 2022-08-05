@@ -1,6 +1,8 @@
 using GatheredData.Api.Models;
 using GatheredData.Api.Services;
+using GatheredData.Api.Dtos;
 using Microsoft.AspNetCore.Mvc;
+using AutoMapper;
 
 namespace GatheredData.Api.Controllers;
 
@@ -9,48 +11,62 @@ namespace GatheredData.Api.Controllers;
 public class ProductsController : ControllerBase
 {
     private readonly ProductsService _productsService;
+    private readonly IMapper _mapper;
 
-    public ProductsController(ProductsService productsService) =>
+    public ProductsController(ProductsService productsService, IMapper mapper)
+    {
         _productsService = productsService;
+        _mapper = mapper;
+    }
 
     [HttpGet]
-    public async Task<List<Product>> Get() =>
-        await _productsService.GetAsync();
+    public async Task<List<ProductPayLoadDto>> Get()
+    {
+        var entities = await _productsService.GetAsync();
+
+        return _mapper.Map<List<ProductPayLoadDto>>(entities);
+    }
 
     [HttpGet("{id:length(24)}")]
-    public async Task<ActionResult<Product>> Get(string id)
+    public async Task<ActionResult<ProductPayLoadDto>> Get(string id)
     {
-        var obj = await _productsService.GetAsync(id);
+        var entity = await _productsService.GetAsync(id);
 
-        if (obj is null)
+        if (entity is null)
         {
             return NotFound();
         }
 
-        return obj;
+        return _mapper.Map<ProductPayLoadDto>(entity);
     }
 
     [HttpPost]
-    public async Task<IActionResult> Post(Product newObj)
+    public async Task<IActionResult> Post(ProductInputDto newObj)
     {
-        await _productsService.CreateAsync(newObj);
+        var entity = _mapper.Map<Product>(newObj);
 
-        return CreatedAtAction(nameof(Get), new { id = newObj.Id }, newObj);
+        await _productsService.CreateAsync(entity);
+
+        ProductPayLoadDto payLoadDto = _mapper.Map<ProductPayLoadDto>(entity);
+
+        return CreatedAtAction(nameof(Get), new { id = entity.Id }, payLoadDto);
     }
 
     [HttpPut("{id:length(24)}")]
-    public async Task<IActionResult> Update(string id, Product updatedObj)
+    public async Task<IActionResult> Update(string id, ProductInputDto updatedObj)
     {
-        var obj = await _productsService.GetAsync(id);
+        var entity = await _productsService.GetAsync(id);
 
-        if (obj is null)
+        if (entity is null)
         {
             return NotFound();
         }
 
-        updatedObj.Id = obj.Id;
+        entity = _mapper.Map<Product>(updatedObj);
 
-        await _productsService.UpdateAsync(id, updatedObj);
+        entity.Id = id;
+
+        await _productsService.UpdateAsync(id, entity);
 
         return NoContent();
     }
@@ -58,9 +74,9 @@ public class ProductsController : ControllerBase
     [HttpDelete("{id:length(24)}")]
     public async Task<IActionResult> Delete(string id)
     {
-        var obj = await _productsService.GetAsync(id);
+        var entity = await _productsService.GetAsync(id);
 
-        if (obj is null)
+        if (entity is null)
         {
             return NotFound();
         }
