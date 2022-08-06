@@ -6,3 +6,6 @@ use <your db name>
 
 # create collection
 db.createCollection('your collection name')
+
+# open docker container in terminal
+docker exec -it <container name> /bin/bash
