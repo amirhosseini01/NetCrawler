@@ -10,10 +10,10 @@ namespace GatheredData.Api.Controllers;
 [Route("api/[controller]")]
 public class ProductsController : ControllerBase
 {
-    private readonly ProductsService _productsService;
+    private readonly IProductsService _productsService;
     private readonly IMapper _mapper;
 
-    public ProductsController(ProductsService productsService, IMapper mapper)
+    public ProductsController(IProductsService productsService, IMapper mapper)
     {
         _productsService = productsService;
         _mapper = mapper;

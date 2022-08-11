@@ -4,7 +4,7 @@ using GatheredData.Api.Models;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 
-public class ProductsService
+public class ProductsService: IProductsService
 {
     private readonly IMongoCollection<Product> _productsCollection;
 

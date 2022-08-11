@@ -9,7 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.Configure<ProductStoreDatabaseSettings>(
     builder.Configuration.GetSection("ProductStoreDatabaseSettings"));
 
-builder.Services.AddSingleton<ProductsService>();
+builder.Services.AddSingleton<IProductsService, ProductsService>();
 
 builder.Services.AddControllers();
 
