@@ -20,7 +20,7 @@ public class ProductsController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<List<ProductPayLoadDto>> Get()
+    public async Task<ActionResult<List<ProductPayLoadDto>>> Get()
     {
         var entities = await _productsService.GetAsync();
 
@@ -30,6 +30,10 @@ public class ProductsController : ControllerBase
     [HttpGet("{id:length(24)}")]
     public async Task<ActionResult<ProductPayLoadDto>> Get(string id)
     {
+        if(!IsMongoIdValid(id))
+        {
+            return BadRequest($"Enter {nameof(id)} correctly. Not null or empty and has 24 character length");
+        }
         var entity = await _productsService.GetAsync(id);
 
         if (entity is null)
@@ -84,5 +88,10 @@ public class ProductsController : ControllerBase
         await _productsService.RemoveAsync(id);
 
         return NoContent();
+    }
+
+    private static bool IsMongoIdValid(string id)
+    {
+        return !string.IsNullOrEmpty(id) && id.Length == 24;
     }
 }
