@@ -77,11 +77,12 @@ public class ProductsControllerTest
         Assert.IsAssignableFrom<ProductPayLoadDto>(result.Value);
         Assert.Equal("61a6058e6c43f32854e51f53", result.Value?.Id);
     }
-    
+
     [Theory]
     [InlineData(null)]
     [InlineData("")]
     [InlineData("1234")]
+    [InlineData(" ")]
     public async Task Get_Should_Returns_BadRequest_When_Id_IsNotValid(string id)
     {
         // Arrange
@@ -103,7 +104,7 @@ public class ProductsControllerTest
     {
         // Arrange
         _mockRepo.Setup(repo => repo.GetAsync(id))
-            .ReturnsAsync(()=> null);
+            .ReturnsAsync(() => null);
 
         var controller = new ProductsController(_mockRepo.Object, _mapper);
 
