@@ -102,7 +102,7 @@ public class ProductsControllerTest
     [InlineData("61a6058e6c43f32854e51f53")]
     public async Task Get_Should_Returns_NotFound_When_NoItem_Founded(string id)
     {
-        // Arrange
+        
         _mockRepo.Setup(repo => repo.GetAsync(id))
             .ReturnsAsync(() => null);
 
@@ -114,5 +114,76 @@ public class ProductsControllerTest
         // Assert
         var actionResult = Assert.IsType<ActionResult<ProductPayLoadDto>>(result);
         Assert.IsType<NotFoundResult>(actionResult.Result);
+    }
+
+    [Fact]
+    public async Task Get_Should_Returns_CreatedAtRouteResult_WhenItem_Added_Successfully()
+    {
+        // Arrange
+        ProductInputDto dto = new(Id: "61a6058e6c43f32854e51f53", ProductName: "iphone 13 pro max");
+
+        var controller = new ProductsController(_mockRepo.Object, _mapper);
+
+        // Act
+        var result = await controller.Post(dto);
+
+        // Assert
+
+        var actionResult = Assert.IsType<CreatedAtActionResult>(result);
+        Assert.NotNull(actionResult.Value);
+        Assert.IsType<ProductPayLoadDto>(actionResult.Value);
+        ProductPayLoadDto returnedProductPayLoadDto = (ProductPayLoadDto)(actionResult.Value ??
+            throw new ArgumentException(nameof(actionResult.Value)));
+        Assert.Equal(nameof(controller.Get), actionResult.ActionName);
+        Assert.NotNull(actionResult.RouteValues);
+        Assert.True(actionResult.RouteValues?.ContainsKey("id"));
+        object? routVal = null;
+        Assert.True(actionResult.RouteValues?.TryGetValue("id", out routVal));
+        Assert.Equal(routVal?.ToString(), dto.Id);
+
+        ProductPayLoadDto expectedReturnedDto = new()
+        {
+            Id = dto.Id,
+            ProductName = dto.ProductName??string.Empty
+        };
+        
+        Assert.Equal(expectedReturnedDto.Id, returnedProductPayLoadDto.Id);
+        Assert.Equal(expectedReturnedDto.ProductName, returnedProductPayLoadDto.ProductName);
+    }
+
+    [Fact]
+    public async Task Get_Should_Returns_BadRequest_WhenModelStateIsInvalid()
+    {
+        // Arrange
+        ProductInputDto dto = new(Id: "61a6058e6c43f32854e51f53", ProductName: "iphone 13 pro max");
+
+        var controller = new ProductsController(_mockRepo.Object, _mapper);
+        controller.ModelState.AddModelError(nameof(dto.Id), "Required");
+
+        // Act
+        var result = await controller.Post(dto);
+
+        // Assert
+
+        var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+        Assert.IsType<SerializableError>(badRequestResult.Value);
+    }
+
+    [Fact]
+    public async Task Get_Should_Returns_BadRequest_WhenAnItem_AlreadyExist()
+    {
+        // Arrange
+        ProductInputDto dto = new(Id: "61a6058e6c43f32854e51f53", ProductName: "iphone 13 pro max");
+        _mockRepo.Setup(repo => repo.AnyAsync(dto.Id!))
+            .ReturnsAsync(() => true);
+
+        var controller = new ProductsController(_mockRepo.Object, _mapper);
+
+        // Act
+        var result = await controller.Post(dto);
+
+        // Assert
+
+        var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
     }
 }

@@ -47,6 +47,17 @@ public class ProductsController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Post(ProductInputDto newObj)
     {
+        if(!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
+        if (await _productsService.AnyAsync(newObj.Id!))
+        {
+            return BadRequest($"Enter the {nameof(newObj.Id)}");
+        }
+
+
         var entity = _mapper.Map<Product>(newObj);
 
         await _productsService.CreateAsync(entity);

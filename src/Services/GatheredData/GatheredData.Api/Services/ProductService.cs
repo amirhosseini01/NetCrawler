@@ -27,6 +27,9 @@ public class ProductsService: IProductsService
     public async Task<Product?> GetAsync(string id) =>
         await _productsCollection.Find(x => x.Id == id).FirstOrDefaultAsync();
 
+    public async Task<bool> AnyAsync(string id) =>
+        await _productsCollection.Find(x => x.Id == id).AnyAsync();
+
     public async Task CreateAsync(Product newObj) =>
         await _productsCollection.InsertOneAsync(newObj);
 

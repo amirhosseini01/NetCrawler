@@ -8,6 +8,8 @@ public interface IProductsService
 
     public Task<Product?> GetAsync(string id);
 
+    Task<bool> AnyAsync(string id);
+
     public Task CreateAsync(Product newObj);
 
     public Task UpdateAsync(string id, Product updatedObj);
