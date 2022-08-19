@@ -10,6 +10,7 @@ namespace GatheredData.Api.Controllers;
 [Route("api/[controller]")]
 public class ProductsController : ControllerBase
 {
+    private const string InvalidIdErrorMessage = $"Enter id correctly. Not null or empty and has 24 character length";
     private readonly IProductsService _productsService;
     private readonly IMapper _mapper;
 
@@ -30,9 +31,9 @@ public class ProductsController : ControllerBase
     [HttpGet("{id:length(24)}")]
     public async Task<ActionResult<ProductPayLoadDto>> Get(string id)
     {
-        if(!IsMongoIdValid(id))
+        if(!IsValidMongoDBId(id))
         {
-            return BadRequest($"Enter {nameof(id)} correctly. Not null or empty and has 24 character length");
+            return BadRequest(InvalidIdErrorMessage);
         }
         var entity = await _productsService.GetAsync(id);
 
@@ -70,6 +71,10 @@ public class ProductsController : ControllerBase
     [HttpPut("{id:length(24)}")]
     public async Task<IActionResult> Update(string id, ProductInputDto updatedObj)
     {
+        if(!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
         var entity = await _productsService.GetAsync(id);
 
         if (entity is null)
@@ -89,9 +94,11 @@ public class ProductsController : ControllerBase
     [HttpDelete("{id:length(24)}")]
     public async Task<IActionResult> Delete(string id)
     {
-        var entity = await _productsService.GetAsync(id);
-
-        if (entity is null)
+        if(!IsValidMongoDBId(id))
+        {
+            return BadRequest(InvalidIdErrorMessage);
+        }
+        if (!await _productsService.AnyAsync(id))
         {
             return NotFound();
         }
@@ -101,7 +108,7 @@ public class ProductsController : ControllerBase
         return NoContent();
     }
 
-    private static bool IsMongoIdValid(string id)
+    public bool IsValidMongoDBId(string id)
     {
         return !string.IsNullOrEmpty(id) && id.Length == 24;
     }
