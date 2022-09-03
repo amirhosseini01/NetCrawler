@@ -11,33 +11,19 @@ public class ProductServiceTest
     {
         ProductStoreDatabaseSettings productStoreDatabaseSettings = new()
         {
-            ConnectionString = "mongodb://gathereddataapidb:27017",
+            ConnectionString = "mongodb://localhost:27017",
             DatabaseName = "NetCrawler",
             ProductsCollectionName = "Products"
         };
-
-        IOptions<ProductStoreDatabaseSettings> opt = Options.Create(productStoreDatabaseSettings);
-
-        _productsService = new ProductsService(opt);
+        _productsService = new
+            ProductsService(Options.Create(productStoreDatabaseSettings));
     }
 
     [Fact]
     public async Task GetAsync_Should_Return_ListOfProducts()
     {
-        //arrange
-         ProductStoreDatabaseSettings productStoreDatabaseSettings = new()
-        {
-            ConnectionString = "mongodb://gathereddataapidb:27017",
-            DatabaseName = "NetCrawler",
-            ProductsCollectionName = "Products"
-        };
-
-        IOptions<ProductStoreDatabaseSettings> opt = Options.Create(productStoreDatabaseSettings);
-
-        var productsService = new ProductsService(opt);
-
         //act
-        var result = await productsService.GetAsync();
+        var result = await _productsService.GetAsync();
 
         //assert
         Assert.NotNull(result);

@@ -108,6 +108,7 @@ public class ProductsController : ControllerBase
         return NoContent();
     }
 
+    [ApiExplorerSettings(IgnoreApi = true)]
     public bool IsValidMongoDBId(string id)
     {
         return !string.IsNullOrEmpty(id) && id.Length == 24;
