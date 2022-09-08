@@ -31,15 +31,22 @@ public class ProductServiceTest
     }
 
     [Theory]
-    [InlineData("61a6058e6c43f32854e51f51")]
+    [InlineData("61a6058e6c43f32854e51f01")]
+    [InlineData("61a6058e6c43f32854e51f02")]
     public async Task GetAsync_Should_Return_Product(string id)
     {
+        //arrange
+        await _productsService.CreateTestProduct(productId: id);
+
         //act
         var result = await _productsService.GetAsync(id);
 
         //assert
         Assert.NotNull(result);
         Assert.IsType<Product>(result);
+
+        //arrange
+        await _productsService.RemoveTestProduct(productId: id);
     }
 
     [Theory]
@@ -58,6 +65,7 @@ public class ProductServiceTest
     [InlineData(" ")]
     [InlineData("  ")]
     [InlineData("1234")]
+    [InlineData("61a6058e6c43f32854e51f01234")]
     public async Task GetAsync_Should_Throw(string id)
     {
         //act & assert
@@ -65,14 +73,21 @@ public class ProductServiceTest
     }
 
     [Theory]
-    [InlineData("61a6058e6c43f32854e51f51")]
+    [InlineData("61a6058e6c43f32854e51f01")]
+    [InlineData("61a6058e6c43f32854e51f02")]
     public async Task AnyAsync_Should_Return_True(string id)
     {
+        //arrange
+        await _productsService.CreateTestProduct(productId: id);
+
         //act
         var result = await _productsService.AnyAsync(id);
 
         //assert
         Assert.True(result);
+
+        //arrange
+        await _productsService.RemoveTestProduct(productId: id);
     }
 
     [Theory]
@@ -91,9 +106,41 @@ public class ProductServiceTest
     [InlineData(" ")]
     [InlineData("  ")]
     [InlineData("1234")]
+    [InlineData("61a6058e6c43f32854e51f01234")]
     public async Task AnyAsync_Should_Throw(string id)
     {
         //act & assert
-        await Assert.ThrowsAnyAsync<FormatException>(() =>  _productsService.AnyAsync(id));
+        await Assert.ThrowsAnyAsync<FormatException>(() => _productsService.AnyAsync(id));
+    }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData("61a6058e6c43f32854e51f00")]
+    [InlineData("61a6058e6c43f32854e51f01")]
+    public async Task RemoveAsync_Should_Not_Throw(string id)
+    {
+        //arrange
+        await _productsService.CreateTestProduct(productId: id);
+
+        //act
+        var exception = await Record.ExceptionAsync(() => _productsService.RemoveAsync(id));
+
+        //assert
+        Assert.Null(exception);
+    }
+
+    [Theory]
+    [InlineData(" ")]
+    [InlineData("  ")]
+    [InlineData("1234")]
+    [InlineData("61a6058e6c43f32854e51f01234")]
+    public async Task RemoveAsync_Should_Throw(string id)
+    {
+        //act
+        var exception = await Record.ExceptionAsync(() => _productsService.RemoveAsync(id));
+
+        //assert
+        Assert.NotNull(exception);
+        Assert.IsType<FormatException>(exception);
     }
 }
