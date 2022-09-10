@@ -127,6 +127,7 @@ public class ProductServiceTest
 
         //assert
         Assert.Null(exception);
+        Assert.False(await _productsService.AnyAsync(id));
     }
 
     [Theory]
@@ -142,5 +143,101 @@ public class ProductServiceTest
         //assert
         Assert.NotNull(exception);
         Assert.IsType<FormatException>(exception);
+    }
+
+    [Fact]
+    public async Task CreateAsync_Should_Not_Throw()
+    {
+        //arrange
+        var entity = new Product()
+        {
+            Id = "61a6058e6c43f32854e51f00",
+            ProductName = "test"
+        };
+
+        //act
+        var exception = await Record.ExceptionAsync(() => _productsService.CreateAsync(entity));
+
+        //assert
+        Assert.Null(exception);
+        Assert.True(await _productsService.AnyAsync(entity.Id));
+
+        //arrange
+        await _productsService.RemoveTestProduct(entity.Id);
+    }
+
+    [Theory]
+    [InlineData(" ")]
+    [InlineData("  ")]
+    [InlineData("1234")]
+    [InlineData("61a6058e6c43f32854e51f01234")]
+    public async Task CreateAsync_Should_Throw(string id)
+    {
+        //arrange
+        var entity = new Product()
+        {
+            Id = id,
+            ProductName = "test"
+        };
+
+        //act
+        var exception = await Record.ExceptionAsync(() => _productsService.CreateAsync(entity));
+
+        //assert
+        Assert.NotNull(exception);
+        Assert.IsType<FormatException>(exception);
+    }
+
+    [Theory]
+    [InlineData(" ")]
+    [InlineData("  ")]
+    [InlineData("1234")]
+    [InlineData("61a6058e6c43f32854e51f01234")]
+    public async Task UpdateAsync_Should_Throw(string id)
+    {
+        //arrange
+        var entity = new Product()
+        {
+            Id = id,
+            ProductName = "test"
+        };
+
+        //act
+        var exception = await Record.ExceptionAsync(() => _productsService.UpdateAsync(entity.Id, entity));
+
+        //assert
+        Assert.NotNull(exception);
+        Assert.IsType<FormatException>(exception);
+    }
+
+    [Fact]
+    public async Task UpdateAsync_Should_Not_Throw()
+    {
+        //arrange
+        const string productId = "61a6058e6c43f32854e51f00";
+        await _productsService.CreateTestProduct(productId);
+        var entity = await _productsService.GetAsync(productId);
+        if(entity is null)
+        {
+            throw new Exception(message: "No item added");
+        }
+
+        entity.ProductName = "my new test";
+
+        //act
+        var exception = await Record.ExceptionAsync(() => _productsService.UpdateAsync(entity.Id!, entity));
+
+        var entity_after_update = await _productsService.GetAsync(productId);
+        if(entity_after_update is null)
+        {
+            throw new Exception(message: "No item added");
+        }
+
+        //assert
+        Assert.Null(exception);
+        Assert.True(entity_after_update.ProductName == "my new test");
+
+        //arrange
+        await _productsService.RemoveTestProduct(productId);
     }
 }
